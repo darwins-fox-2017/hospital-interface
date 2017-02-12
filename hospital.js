@@ -99,6 +99,27 @@ class Hospital {
     return {status: false, msg: 'Failed while removing ): '}
   }
 
+  removeRecord(idPatient, idRecord){
+    let searchResult = searchById('patients', idPatient)
+    if (searchResult.isFound) {
+      this.patients[searchResult.index].records.splice(idRecord, 1)
+      return {status: true, msg: 'Record Removed'}
+    }
+    return {status: false, msg: 'Failed when trying to remove a record'}
+  }
+
+  searchById(type, id){
+    if (type == 'patients') {
+      for (let i = 0; i < this.patients.length; i++) {
+        if (this.patients[i].id == idPatient) {
+          return {isFound: true, index: i}
+        }
+      }
+    }
+
+    return {isFound: false}
+  }
+
   viewData(dataType){
     if (dataType == 'employees') {
       console.log(`List of Employees`);
@@ -369,6 +390,9 @@ class Main {
             nextQuestion = 'Diagnosa > '
             console.log(nextQuestion);
             this.rl.setPrompt(nextQuestion)
+            break;
+          case 'remove_record':
+            this.hospital.removeRecord(commandParsed[1], commandParsed[2])
             break;
           default:
         }
