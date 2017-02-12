@@ -341,25 +341,6 @@ class Main {
     })
     // console.log(this.hospital.employees);
   }
-
-  executeCommand(command){
-    switch (command) {
-      case 'view_employees':
-
-        break;
-      case 'add_employee':
-
-        this.hospital.addEmployee()
-        console.log(employeeProperties);
-
-        // this.rl.on('line', (employee) => {
-        //   employeeProperties.name = employee
-        // })
-        break
-      default:
-
-    }
-  }
 }
 
 let program = new Main()
