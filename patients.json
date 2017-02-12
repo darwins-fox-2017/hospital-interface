@@ -1,1 +1,13 @@
-[{"id":1,"name":"Jhon","age":22},{"id":2,"name":"Doe","age":29}]
+[{
+    "id": 1,
+    "name": "Jhon",
+    "age": 22,
+    "records": [{
+        "diagnosa": "pilek"
+    }]
+}, {
+    "id": 2,
+    "name": "Doe",
+    "age": 29,
+    "records": []
+}]

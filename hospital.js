@@ -122,8 +122,17 @@ class Hospital {
         return this.patients[this.patients.length - 1].id + 1
         break;
       default:
-
     }
+  }
+
+  addRecord(id, diagnosa){
+    for (let i = 0; i < this.patients.length; i++) {
+      if (this.patients[i].id == id) {
+        this.patients[i].records.push(new Record(diagnosa))
+        return {status: true, msg: 'Record added!'}
+      }
+    }
+    return {status:false, msg: 'Failed when adding record ): '}
   }
 
   showWelcomeMessage(user){
@@ -266,6 +275,7 @@ class Main {
               switch (nextQuestionType.split(':')[1]) {
                 case 'name':
                   patientProperties.id = this.hospital.nextId('patients')
+                  patientProperties.records = []
                   patientProperties.name = command
                   nextQuestionType = 'add_patient:age'
                   console.log(`${command} ages ? >`);
@@ -293,6 +303,19 @@ class Main {
                 }
               }
 
+              break;
+            case 'add_record':
+              if (nextQuestionType.split(':')[1] == 'diagnosa') {
+                let resultAddRecord = this.hospital.addRecord(nextQuestionType.split(':')[2], command)
+                if (resultAddRecord.status) {
+                  console.log(`${resultAddRecord.msg}`);
+                  this.hospital.showOptionCommand(this.currentUser.role)
+                  this.hospital.writeToFile('patients')
+                  nextQuestionType = ''
+                } else {
+                  console.log(`${resultAddRecord.msg}`);
+                }
+              }
               break;
           default:
 
@@ -337,9 +360,27 @@ class Main {
           default:
 
         }
+
+        // Special case for argument patamater alike
+        let commandParsed = command.split(' ')
+        switch (commandParsed[0]) {
+          case 'add_record':
+            nextQuestionType = 'add_record:diagnosa:' + commandParsed[1]
+            nextQuestion = 'Diagnosa > '
+            console.log(nextQuestion);
+            this.rl.setPrompt(nextQuestion)
+            break;
+          default:
+        }
       }
     })
     // console.log(this.hospital.employees);
+  }
+}
+
+class Record {
+  constructor(diagnosa) {
+    this.diagnosa = diagnosa
   }
 }
 
