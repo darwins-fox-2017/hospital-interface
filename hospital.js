@@ -10,14 +10,24 @@ class Hospital {
     this.employees = []
     this.patients = hospitalProperties.patients
     this.location = hospitalProperties.location
+    this.employeesFileName = 'employees.json'
+    this.patientsFileName = 'patients.json'
   }
 
   parseEmployeeFromFile(){
-    this.employees = jsonfile.readFileSync('employees.json')
+    this.employees = jsonfile.readFileSync(this.employeesFileName)
   }
 
-  writeToFile(){
-
+  writeToFile(fileType){
+    switch (fileType) {
+      case 'employees':
+        jsonfile.writeFileSync(this.employeesFileName, this.employees)
+        break;
+      case 'patients':
+        jsonfile.writeFileSync(this.patientsFileName, this.patients)
+        break;
+      default:
+    }
   }
 
   login(username, password){
@@ -56,15 +66,28 @@ class Hospital {
       default:
 
     }
+    console.log(`- logout`);
   }
 
-
+  removeEmployee(id){
+    for (let i = 0; i < this.employees.length; i++) {
+      if (this.employees[i].id == id) {
+        this.employees.splice(i, 1)
+        return {status: true, msg: 'Removed'}
+      }
+    }
+    return {status: false, msg: 'Failed while removing ): '}
+  }
 
   viewEmployess(){
     console.log(`List of Employees`);
     for (let i = 0; i < this.employees.length; i++) {
       console.log(`${this.employees[i].id} -  ${this.employees[i].name} - ${this.employees[i].role}`);
     }
+  }
+
+  nextId(){
+    return this.employees[this.employees.length - 1].id + 1
   }
 
   addEmployee(){
@@ -125,6 +148,14 @@ class Auth extends Hospital{
   }
 }
 
+class Diagnosa {
+  constructor() {
+    this.diagnosa = ''
+  }
+
+
+}
+
 class Main {
   constructor() {
     this.rl = readline.createInterface({
@@ -151,6 +182,8 @@ class Main {
     let password = ''
     console.log('Please enter your username : ');
     this.rl.prompt()
+    let nextQuestion = ''
+    let nextQuestionType = ''
 
     let employeeProperties = {}
     let properties = ['nama', 'username', 'password', 'role']
@@ -169,11 +202,11 @@ class Main {
             // if login is succes
             this.currentUser = loginResult.user
             // show welcome message
-            this.hospital.showWelcomeMessage(loginResult.user)
+            this.hospital.showWelcomeMessage(this.currentUser.name)
             // set is login to true
             isLogin = true
             // show command option
-            this.hospital.showOptionCommand(loginResult.user.role)
+            this.hospital.showOptionCommand(this.currentUser.role)
           } else {
             // login fail
             console.log(loginResult.msg);
@@ -182,9 +215,72 @@ class Main {
         }
 
         // after it logined
-        this.executeCommand(command)
-        if (command == 'add_employee') {
-          console.log('hakaala');
+
+        // Nexer block
+        switch (nextQuestionType.split(':')[0]) {
+          case 'add_employee':
+            switch (nextQuestionType.split(':')[1]) {
+              case 'name':
+                employeeProperties.id = this.hospital.nextId()
+                employeeProperties.name = command
+                nextQuestionType = 'add_employee:role'
+                console.log('set the role : ');
+                break;
+              case 'role':
+                employeeProperties.role = command
+                nextQuestionType = 'add_employee:username'
+                console.log('set the username >');
+                break;
+              case 'username':
+                employeeProperties.username = command
+                nextQuestionType = 'add_employee:password'
+                console.log('set the password >');
+                break;
+              case 'password':
+                employeeProperties.password = command
+                console.log(employeeProperties.id );
+                this.hospital.employees.push(employeeProperties)
+                this.hospital.writeToFile('employees')
+                console.log(`Employee saved! with name : ${employeeProperties.name}`);
+                // console.log(this.hospital.employees);
+                this.hospital.showOptionCommand(this.currentUser.role)
+                nextQuestionType = ''
+                break;
+              default:
+            }
+            break;
+            case 'remove_employee':
+              if (nextQuestionType.split(':')[1] == 'id') {
+                let removeResult = this.hospital.removeEmployee(command)
+                if (removeResult.status) {
+                  console.log(`${removeResult.msg}`);
+                  this.hospital.showOptionCommand(this.currentUser.role)
+                  nextQuestionType = ''
+                }
+              }
+              break;
+          default:
+
+        }
+
+        // this.executeCommand(command)
+        // First steper
+        switch (command) {
+          case 'add_employee':
+            nextQuestion = 'name >'
+            nextQuestionType = 'add_employee:name'
+            console.log(nextQuestion);
+            this.rl.setPrompt(nextQuestion)
+            break;
+          case 'view_employees':
+            this.hospital.viewEmployess()
+            this.hospital.showOptionCommand(this.currentUser.role)
+            break;
+          case 'remove_employee':
+            nextQuestionType = 'remove_employee:id'
+            console.log('remove employee with id ? >');
+            break;
+          default:
 
         }
       }
@@ -195,13 +291,11 @@ class Main {
   executeCommand(command){
     switch (command) {
       case 'view_employees':
-        this.hospital.viewEmployess()
+
         break;
       case 'add_employee':
 
         this.hospital.addEmployee()
-
-
         console.log(employeeProperties);
 
         // this.rl.on('line', (employee) => {
