@@ -100,18 +100,35 @@ class Hospital {
   }
 
   removeRecord(idPatient, idRecord){
-    let searchResult = searchById('patients', idPatient)
+    let searchResult = this.searchById('patients', idPatient)
     if (searchResult.isFound) {
-      this.patients[searchResult.index].records.splice(idRecord, 1)
-      return {status: true, msg: 'Record Removed'}
+      let searchRecordResult = this.searchRecord(idPatient, idRecord)
+      if (searchRecordResult.status) {
+        console.log('++++++ ', this.patients[searchResult.index].records);
+        this.patients[searchResult.index].records.splice(searchRecordResult.recordIndex, 1)
+        console.log('++++++ ', this.patients[searchResult.index].records);
+        this.writeToFile('patients')
+        return {status: true, msg: 'Record Removed'}
+      } else {
+        console.log(`${searchRecordResult.msg}`);
+      }
     }
     return {status: false, msg: 'Failed when trying to remove a record'}
+  }
+
+  searchRecord(idPatient, idRecord){
+    for (let i = 0; i < this.patients[idPatient].records.length; i++) {
+      if (this.patients[idPatient].records[i].id == idRecord) {
+        return {status: true, msg: 'Record found', recordIndex: i}
+      }
+    }
+    return {status: false, msg: 'Record not found', recordIndex: null}
   }
 
   searchById(type, id){
     if (type == 'patients') {
       for (let i = 0; i < this.patients.length; i++) {
-        if (this.patients[i].id == idPatient) {
+        if (this.patients[i].id == id) {
           return {isFound: true, index: i}
         }
       }
@@ -134,13 +151,22 @@ class Hospital {
     }
   }
 
+  nextIdOfRecord(idPatient){
+    if (this.patients[idPatient].records.length > 0) {
+      return this.patients[idPatient].records[this.patients[idPatient].records.length -1].id + 1
+    } else {
+      return 1
+    }
+  }
+
   nextId(type){
     switch (type) {
       case 'employees':
-        return this.employees[this.employees.length - 1].id + 1
+
+        return this.employees.length > 0 ? this.employees[this.employees.length - 1].id + 1 : 1
         break;
       case 'patients':
-        return this.patients[this.patients.length - 1].id + 1
+        return this.patients.length > 0 ? this.patients[this.patients.length - 1].id + 1 : 1
         break;
       default:
     }
@@ -149,7 +175,7 @@ class Hospital {
   addRecord(id, diagnosa){
     for (let i = 0; i < this.patients.length; i++) {
       if (this.patients[i].id == id) {
-        this.patients[i].records.push(new Record(diagnosa))
+        this.patients[i].records.push(new Record(diagnosa, this.nextIdOfRecord(i)))
         return {status: true, msg: 'Record added!'}
       }
     }
@@ -393,6 +419,8 @@ class Main {
             break;
           case 'remove_record':
             this.hospital.removeRecord(commandParsed[1], commandParsed[2])
+            this.hospital.showOptionCommand(this.currentUser.role)
+            nextQuestionType = ''
             break;
           default:
         }
@@ -403,7 +431,8 @@ class Main {
 }
 
 class Record {
-  constructor(diagnosa) {
+  constructor(diagnosa, idRecord) {
+    this.id = idRecord
     this.diagnosa = diagnosa
   }
 }
