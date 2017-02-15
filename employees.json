@@ -1,0 +1,25 @@
+[{
+    "id": 1,
+    "name": "Bambang Handoko",
+    "level": "Admin",
+    "username": "mrhandoko",
+    "password": "satepadang",
+    "createDate": "Wed Feb 15 2017 23:25:06 GMT+0700 (WIB)",
+    "lastModified": "Wed Feb 15 2017 23:25:06 GMT+0700 (WIB)"
+}, {
+    "id": 2,
+    "name": "Ratna Deewi",
+    "level": "Doctor",
+    "username": "ratna",
+    "password": "bolukukus",
+    "createDate": "Wed Feb 15 2017 23:28:04 GMT+0700 (WIB)",
+    "lastModified": "Wed Feb 15 2017 23:28:04 GMT+0700 (WIB)"
+}, {
+    "id": 3,
+    "name": "Seedorf Gunawan",
+    "level": "Admin",
+    "username": "seedorf",
+    "password": "satekambing",
+    "createDate": "Thu Feb 16 2017 00:29:28 GMT+0700 (WIB)",
+    "lastModified": "Thu Feb 16 2017 00:29:28 GMT+0700 (WIB)"
+}]
