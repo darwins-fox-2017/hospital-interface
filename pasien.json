@@ -1,0 +1,23 @@
+[{
+    "id": 1,
+    "name": "Jhon",
+    "age": 22,
+    "records": [{
+        "id": 1,
+        "diagnosa": "pilek"
+    }, {
+        "id": 2,
+        "diagnosa": "batuk"
+    }]
+}, {
+    "id": 2,
+    "name": "Doe",
+    "age": 29,
+    "records": [{
+        "id": 1,
+        "diagnosa": "masuk angin"
+    }, {
+        "id": 2,
+        "diagnosa": "pusing"
+    }]
+}]
