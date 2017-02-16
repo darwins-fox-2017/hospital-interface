@@ -1,0 +1,37 @@
+[
+  {
+    "id" : 1,
+    "name" : "Firman Pebrizal",
+    "position" : "doctor",
+    "username" : "mfpebrizal",
+    "password" : "123"
+  },
+  {
+    "id" : 2,
+    "name" : "Sumanto",
+    "position" : "office boy",
+    "username" : "sumanto",
+    "password" : "123"
+  },
+  {
+    "id" : 3,
+    "name" : "Manda Joana",
+    "position" : "admin",
+    "username" : "manda",
+    "password" : "123"
+  },
+  {
+    "id" : 4,
+    "name" : "Ina Sukma",
+    "position" : "receptionist",
+    "username" : "InaSukma",
+    "password" : "123"
+  },
+  {
+    "id" : 3,
+    "name" : "Sumantiono",
+    "position" : "office boy",
+    "username" : "sumantiono",
+    "password" : "123"
+  }
+]

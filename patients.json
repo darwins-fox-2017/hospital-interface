@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "name": "Halim Kamal",
+    "diagnosis": "flu"
+  },
+  {
+    "id": 3,
+    "name": "Dona Ardiningrum",
+    "diagnosis": "Maag"
+  },
+  {
+    "id": 4,
+    "name": "Muhammad Amir",
+    "diagnosis": "Sakit Gigi"
+  }
+]
