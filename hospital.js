@@ -102,23 +102,23 @@ class Hospital {
   removeRecord(idPatient, idRecord){
     let searchResult = this.searchById('patients', idPatient)
     if (searchResult.isFound) {
-      let searchRecordResult = this.searchRecord(idPatient, idRecord)
-      if (searchRecordResult.status) {
-        console.log('++++++ ', this.patients[searchResult.index].records);
+      let searchRecordResult = this.searchRecord(searchResult.index, idRecord)
+      if(searchRecordResult.status){
         this.patients[searchResult.index].records.splice(searchRecordResult.recordIndex, 1)
-        console.log('++++++ ', this.patients[searchResult.index].records);
         this.writeToFile('patients')
-        return {status: true, msg: 'Record Removed'}
+        return {status: true, msg:'Record deleted'}
       } else {
-        console.log(`${searchRecordResult.msg}`);
+        return {status: false, msg:'Record not found'}
       }
+    } else {
+      return {status: false, msg:'Patiend with id : ' + idPatient + ' not found'}
     }
-    return {status: false, msg: 'Failed when trying to remove a record'}
   }
 
-  searchRecord(idPatient, idRecord){
-    for (let i = 0; i < this.patients[idPatient].records.length; i++) {
-      if (this.patients[idPatient].records[i].id == idRecord) {
+  searchRecord(indexPatient, idRecord){
+    for (let i = 0; i < this.patients[indexPatient].records.length; i++) {
+      if (this.patients[indexPatient].records[i].id == idRecord) {
+        // this.patients[indexPatient].records.splice(i, 1)
         return {status: true, msg: 'Record found', recordIndex: i}
       }
     }
@@ -147,6 +147,12 @@ class Hospital {
       console.log(`List of Patients`);
       for (let i = 0; i < this.patients.length; i++) {
         console.log(`${this.patients[i].id} -  ${this.patients[i].name} `);
+        if (this.patients[i].records.length > 0) {
+          console.log('Medical record :');
+          for (let j= 0; j < this.patients[i].records.length; j++) {
+            console.log(`Diagnosa : ${this.patients[i].records[j].diagnosa}`);
+          }
+        }
       }
     }
   }
@@ -412,13 +418,24 @@ class Main {
         let commandParsed = command.split(' ')
         switch (commandParsed[0]) {
           case 'add_record':
-            nextQuestionType = 'add_record:diagnosa:' + commandParsed[1]
-            nextQuestion = 'Diagnosa > '
-            console.log(nextQuestion);
-            this.rl.setPrompt(nextQuestion)
+            // console.log('------------', commandParsed[1]);
+            if (commandParsed[1] == undefined) {
+              console.log('You want to add record to ? repeat it please.');
+
+            } else {
+              nextQuestionType = 'add_record:diagnosa:' + commandParsed[1]
+              nextQuestion = 'Diagnosa > '
+              console.log(nextQuestion);
+              this.rl.setPrompt(nextQuestion)
+            }
             break;
           case 'remove_record':
-            this.hospital.removeRecord(commandParsed[1], commandParsed[2])
+            let removeRecordResult = this.hospital.removeRecord(commandParsed[1], commandParsed[2])
+            if (removeRecordResult.status) {
+              console.log(removeRecordResult.msg);
+            } else {
+              console.log(removeRecordResult.msg);
+            }
             this.hospital.showOptionCommand(this.currentUser.role)
             nextQuestionType = ''
             break;
