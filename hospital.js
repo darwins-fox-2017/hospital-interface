@@ -48,38 +48,23 @@ class Hospital {
       if (this.question == "password") {
 
         if(this.employees[this.usernameID].password == answer && !this.validPass){
+          if (this.employees[this.usernameID].position === "office boy") {
+            this.question = "menu"
+            console.log("can't acces anything, sorry!");
+            rl.close()
+          }else{
+            this.validPass = true
+            this.question = "menu"
+            rl.setPrompt(`>> `)
+            this.listMenu()
+            rl.prompt()
+          }
 
-          this.validPass = true
-
-          this.question = "menu"
-          rl.setPrompt(`>> `)
-          this.listMenu()
-          rl.prompt()
         }else{
           rl.prompt()
         }
-
-
-
       }
 
-      // if (this.question == "list_patient") {
-      //   this.patientList()
-      //   rl.setPrompt(`>> press enter to go back to home`)
-      //   rl.prompt()
-      //   if(answer == ""){
-      //     this.question = "menu"
-      //   }else{
-      //     rl.prompt()
-      //   }
-      // }
-
-      // if (this.question == "view_records") {
-      //   let id = Number(answer.match(/\d+/g).join(""))
-      //   if (id >= this.patients.length) {
-      //     console.log("id is not found");
-      //   }
-      // }
 
       if (this.question == "menu" && /view_records.*/g.test(answer)) {
         let id = answer.trim().match(/\d+/)
@@ -108,21 +93,41 @@ class Hospital {
       }
 
       if (this.question == "menu" && answer == "add_patient") {
-        // this.question = "add_patient_name"
-        this.addName = true
-        rl.setPrompt(`>> Insert new patient name :\n>> `)
-        rl.prompt()
+        this.question = "add_patient_name"
       }
 
-      // if (this.question == "menu" && this.addName) {
-      //   this.addName = answer
-      //   rl.setPrompt(`>> Insert diagnosis :\n>> `)
-      // }
-      //
-      // if (this.question == "menu" && this.addName) {
-      //   this.addName = answer
-      //   rl.setPrompt(`>> Insert diagnosis :\n>> `)
-      // }
+      if(this.question == "add_patient_name"){
+        let temp = answer
+        if (!this.addName && answer == "add_patient") {
+          rl.setPrompt(`>> Insert new patient name : `)
+          rl.prompt()
+        }
+
+        this.question = "add_diagnosis"
+        if (answer == this.addName) {
+          rl.setPrompt(`>> Diagnosis : `)
+          rl.prompt()
+          this.question = "add_diagnosis"
+        }
+        this.addNewName(temp)
+      }
+
+      if(this.question == "add_diagnosis"){
+        rl.prompt()
+        this.addDiagnosis = answer
+
+        if (answer == this.addDiagnosis) {
+          this.patients.push(new Patient({
+            "id" : this.patients[this.patients.length-1].id+1,
+            "name" : this.addName,
+            "diagnosis" : this.addDiagnosis
+          }))
+          rl.setPrompt(`>> press enter to go back to home or remove another record\n>> `)
+          rl.prompt()
+        }
+
+        // console.log(this.addName , this.addDiagnosis, this.patients);
+      }
 
       if (this.question == "menu" && answer == "list_patient") {
         this.patientList()
@@ -135,41 +140,6 @@ class Hospital {
         this.listMenu()
         rl.prompt()
       }
-
-      // if (this.question == "add_patient_name" && this.addDiagnosis) {
-      //   rl.setPrompt(`>> Insert diagnosis : `)
-      //   rl.prompt()
-      //   this.addDiagnosis = answer
-      //   let data = {
-      //     "name" : this.addName,
-      //     "diagnosis" : this.addDiagnosis
-      //   }
-      //   console.log(data);
-      //     // this.addPatient(data)
-      //
-      //   // if(this.addName){
-      //   //   rl.setPrompt(`>> Insert diagnosis : `)
-      //   //   rl.prompt()
-      //   //   this.addDiagnosis = answer
-      //   //   let data = {
-      //   //     "name" : this.addName,
-      //   //     "diagnosis" : this.addDiagnosis
-      //   //   }
-      //   //   this.addPatient(data)
-      //   // }
-      // }
-
-      if (this.question == "add_patient_name") {
-        rl.setPrompt(`>> Insert new patient name : `)
-        rl.prompt()
-        this.addName = answer
-        console.log(answer);
-        // if (this.addDiagnosis) {
-        //   this.question = "add_patient_diagnosis"
-        // }
-      }
-
-
     })
   }
 
@@ -188,6 +158,14 @@ class Hospital {
     console.log(`=============================================`);
 
 
+  }
+
+  addNewName(name){
+    this.addName = name
+  }
+
+  addNewDiagnosis(diagnosis){
+    this.addDiagnosis = diagnosis
   }
 
   addPatient(data){
@@ -266,22 +244,6 @@ class Hospital {
       [`${this.patients[i].id}`,`${this.patients[i].name}`, `${this.patients[i].diagnosis}`]
       )
     }
-    // if(id){
-    //   for (let i = 0; i < this.patients.length; i++) {
-    //     if(this.patients[i].id == id){
-    //       table.push(
-    //       [`${this.patients[i].id}`,`${this.patients[i].name}`, `${this.patients[i].diagnosis}`]
-    //       )
-    //     }
-    //   }
-    // }else{
-    //   for (let i = 0; i < this.patients.length; i++) {
-    //     table.push(
-    //     [`${this.patients[i].id}`,`${this.patients[i].name}`, `${this.patients[i].diagnosis}`]
-    //     )
-    //   }
-    // }
-
     console.log('\n'+table.toString());
   }
 }
